@@ -1,0 +1,188 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Team Member Management (JS - Not react/django)</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            background-color: #f0f0f0;
+        }
+        .container {
+            width: 90%;
+            max-width: 600px;
+            background: white;
+            padding: 20px;
+            box-shadow: 0 0 10px rgba(0,0,0,0.1);
+        }
+        .hidden {
+            display: none;
+        }
+        .btn {
+            padding: 10px 20px;
+            margin: 5px 0;
+            cursor: pointer;
+        }
+        .btn-primary {
+            background-color: #007bff;
+            color: white;
+            border: none;
+        }
+        .btn-danger {
+            background-color: #dc3545;
+            color: white;
+            border: none;
+        }
+        .btn-secondary {
+            background-color: #6c757d;
+            color: white;
+            border: none;
+        }
+        input, button {
+            width: 100%;
+            margin: 5px 0;
+            padding: 10px;
+        }
+        ul {
+            list-style-type: none;
+            padding: 0;
+        }
+        li {
+            margin-bottom: 10px;
+            border: 1px solid #ddd;
+            padding: 10px;
+            border-radius: 5px;
+            background-color: #f9f9f9;
+        }
+        .member-info {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .member-info button {
+            margin-left: 10px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div id="list-page" class="page">
+            <h2>Team Members</h2>
+            <ul id="team-list"></ul>
+            <button class="btn btn-primary" onclick="showAddPage()">Add Member</button>
+        </div>
+
+        <div id="add-page" class="page hidden">
+            <h2>Add Team Member</h2>
+            <input type="text" id="add-name" placeholder="Name">
+            <input type="email" id="add-email" placeholder="Email">
+            <input type="tel" id="add-phone" placeholder="Phone">
+            <button class="btn btn-primary" onclick="addMember()">Add</button>
+            <button class="btn btn-secondary" onclick="showListPage()">Cancel</button>
+        </div>
+
+        <div id="edit-page" class="page hidden">
+            <h2>Edit Team Member</h2>
+            <input type="text" id="edit-name" placeholder="Name">
+            <input type="email" id="edit-email" placeholder="Email">
+            <input type="tel" id="edit-phone" placeholder="Phone">
+            <button class="btn btn-primary" onclick="updateMember()">Update</button>
+            <button class="btn btn-secondary" onclick="showListPage()">Cancel</button>
+        </div>
+    </div>
+
+    <script>
+        let members = JSON.parse(localStorage.getItem('teamMembers')) || [];
+        let currentIndex = null;
+
+        function showListPage() {
+            document.getElementById('list-page').classList.remove('hidden');
+            document.getElementById('add-page').classList.add('hidden');
+            document.getElementById('edit-page').classList.add('hidden');
+            renderList();
+        }
+
+        function showAddPage() {
+            document.getElementById('list-page').classList.add('hidden');
+            document.getElementById('add-page').classList.remove('hidden');
+            document.getElementById('edit-page').classList.add('hidden');
+        }
+
+        function showEditPage(index) {
+            currentIndex = index;
+            document.getElementById('list-page').classList.add('hidden');
+            document.getElementById('add-page').classList.add('hidden');
+            document.getElementById('edit-page').classList.remove('hidden');
+            document.getElementById('edit-name').value = members[index].name;
+            document.getElementById('edit-email').value = members[index].email;
+            document.getElementById('edit-phone').value = members[index].phone;
+        }
+
+        function addMember() {
+            const name = document.getElementById('add-name').value.trim();
+            const email = document.getElementById('add-email').value.trim();
+            const phone = document.getElementById('add-phone').value.trim();
+            if (name && email && phone) {
+                members.push({ name, email, phone });
+                localStorage.setItem('teamMembers', JSON.stringify(members));
+                clearAddForm();
+                showListPage();
+            }
+        }
+
+        function updateMember() {
+            const name = document.getElementById('edit-name').value.trim();
+            const email = document.getElementById('edit-email').value.trim();
+            const phone = document.getElementById('edit-phone').value.trim();
+            if (name && email && phone) {
+                members[currentIndex] = { name, email, phone };
+                localStorage.setItem('teamMembers', JSON.stringify(members));
+                showListPage();
+            }
+        }
+
+        function deleteMember(index) {
+            members.splice(index, 1);
+            localStorage.setItem('teamMembers', JSON.stringify(members));
+            showListPage();
+        }
+
+        function renderList() {
+            const list = document.getElementById('team-list');
+            list.innerHTML = '';
+            members.forEach((member, index) => {
+                const listItem = document.createElement('li');
+                listItem.innerHTML = `
+                    <div class="member-info">
+                        <div>
+                            <strong>Name:</strong> ${member.name} <br>
+                            <strong>Email:</strong> ${member.email} <br>
+                            <strong>Phone:</strong> ${member.phone}
+                        </div>
+                        <div>
+                            <button class="btn btn-primary" onclick="showEditPage(${index})">Edit</button>
+                            <button class="btn btn-danger" onclick="deleteMember(${index})">Delete</button>
+                        </div>
+                    </div>
+                `;
+                list.appendChild(listItem);
+            });
+        }
+
+        function clearAddForm() {
+            document.getElementById('add-name').value = '';
+            document.getElementById('add-email').value = '';
+            document.getElementById('add-phone').value = '';
+        }
+
+        document.addEventListener('DOMContentLoaded', showListPage);
+    </script>
+</body>
+</html>
