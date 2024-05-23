@@ -1,4 +1,5 @@
 <!DOCTYPE html>
+<!-- For SIMPLICITY the entire project has been made within ONE FILE - no dependencies. HTML/JS/CSS/Local Storage -->
 <html lang="en">
 <head>
     <meta charset="UTF-8">
@@ -104,32 +105,32 @@
         let currentIndex = null;
 
         function showListPage() {
-            document.getElementById('list-page').classList.remove('hidden');
-            document.getElementById('add-page').classList.add('hidden');
-            document.getElementById('edit-page').classList.add('hidden');
+            eID('list-page').classList.remove('hidden');
+            eID('add-page').classList.add('hidden');
+            eID('edit-page').classList.add('hidden');
             renderList();
         }
 
         function showAddPage() {
-            document.getElementById('list-page').classList.add('hidden');
-            document.getElementById('add-page').classList.remove('hidden');
-            document.getElementById('edit-page').classList.add('hidden');
+            eID('list-page').classList.add('hidden');
+            eID('add-page').classList.remove('hidden');
+            eID('edit-page').classList.add('hidden');
         }
 
         function showEditPage(index) {
             currentIndex = index;
-            document.getElementById('list-page').classList.add('hidden');
-            document.getElementById('add-page').classList.add('hidden');
-            document.getElementById('edit-page').classList.remove('hidden');
-            document.getElementById('edit-name').value = members[index].name;
-            document.getElementById('edit-email').value = members[index].email;
-            document.getElementById('edit-phone').value = members[index].phone;
+            eID('list-page').classList.add('hidden');
+            eID('add-page').classList.add('hidden');
+            eID('edit-page').classList.remove('hidden');
+            eID('edit-name').value = members[index].name;
+            eID('edit-email').value = members[index].email;
+            eID('edit-phone').value = members[index].phone;
         }
 
         function addMember() {
-            const name = document.getElementById('add-name').value.trim();
-            const email = document.getElementById('add-email').value.trim();
-            const phone = document.getElementById('add-phone').value.trim();
+            const name = eID('add-name').value.trim();
+            const email = eID('add-email').value.trim();
+            const phone = eID('add-phone').value.trim();
             if (name && email && phone) {
                 members.push({ name, email, phone });
                 localStorage.setItem('teamMembers', JSON.stringify(members));
@@ -139,9 +140,9 @@
         }
 
         function updateMember() {
-            const name = document.getElementById('edit-name').value.trim();
-            const email = document.getElementById('edit-email').value.trim();
-            const phone = document.getElementById('edit-phone').value.trim();
+            const name = eID('edit-name').value.trim();
+            const email = eID('edit-email').value.trim();
+            const phone = eID('edit-phone').value.trim();
             if (name && email && phone) {
                 members[currentIndex] = { name, email, phone };
                 localStorage.setItem('teamMembers', JSON.stringify(members));
@@ -156,7 +157,7 @@
         }
 
         function renderList() {
-            const list = document.getElementById('team-list');
+            const list = eID('team-list');
             list.innerHTML = '';
             members.forEach((member, index) => {
                 const listItem = document.createElement('li');
@@ -178,12 +179,42 @@
         }
 
         function clearAddForm() {
-            document.getElementById('add-name').value = '';
-            document.getElementById('add-email').value = '';
-            document.getElementById('add-phone').value = '';
+            eID('add-name').value = '';
+            eID('add-email').value = '';
+            eID('add-phone').value = '';
         }
 
+        function eID(id) {
+            if (typeof id === 'string') {
+                if (id.charAt(0) === '#') id=id.substring(1);
+                return document.getElementById(id);
+            } else if (id instanceof HTMLElement) {
+                return id;
+            } else {
+                return null;//throw new TypeError('Invalid input: expected string or HTMLElement');
+            }
+        }
+
+/***************************************************************************************************************************************************************** */
+/***************************************************************************************************************************************************************** */
+/***************************************************************************************************************************************************************** */
+/***************************************************************************************************************************************************************** */
+/***************************************************************************************************************************************************************** */
+/***************************************************************************************************************************************************************** */
+/***************************************************************************************************************************************************************** */
+/***************************************************************************************************************************************************************** */
+/***********************************************        EVENTS SECTION      ************************************************************************************** */
+/***************************************************************************************************************************************************************** */
+/***************************************************************************************************************************************************************** */
+/***************************************************************************************************************************************************************** */
+/***************************************************************************************************************************************************************** */
+/***************************************************************************************************************************************************************** */
+/***************************************************************************************************************************************************************** */
+/***************************************************************************************************************************************************************** */
+/***************************************************************************************************************************************************************** */
+
         document.addEventListener('DOMContentLoaded', showListPage);
+
     </script>
 </body>
 </html>
